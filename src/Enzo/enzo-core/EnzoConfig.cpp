@@ -155,6 +155,14 @@ EnzoConfig::EnzoConfig() throw ()
   initial_sedov_random_pressure_out(0.0),
   initial_sedov_random_density(0.0),
   initial_sedov_random_te_multiplier(0),
+  //EnzoInitialShearStream
+  initial_shear_stream_vshear(0.0),
+  initial_shear_stream_chi(0.0),
+  initial_shear_stream_lambda_pert(0.0),
+  initial_shear_stream_rho_hot(0.0),
+  initial_shear_stream_vel_pert(0.0),
+  initial_shear_stream_radius(0.0),
+  initial_shear_stream_smoothing_thickness(0.0),
   // EnzoInitialShockTube
   initial_shock_tube_setup_name(""),
   initial_shock_tube_aligned_ax(""),
@@ -578,6 +586,15 @@ void EnzoConfig::pup (PUP::er &p)
   p | initial_IG_stellar_disk;
   p | initial_IG_use_gas_particles;
 
+  //Shear Stream
+  p | initial_shear_stream_vshear;
+  p | initial_shear_stream_chi;
+  p | initial_shear_stream_lambda_pert;
+  p | initial_shear_stream_rho_hot;
+  p | initial_shear_stream_vel_pert;
+  p | initial_shear_stream_radius;
+  p | initial_shear_stream_smoothing_thickness;
+
   p | initial_shock_tube_setup_name;
   p | initial_shock_tube_aligned_ax;
   p | initial_shock_tube_axis_velocity;
@@ -817,6 +834,7 @@ void EnzoConfig::read(Parameters * p) throw()
   read_initial_pm_(p);
   read_initial_sedov_(p);
   read_initial_sedov_random_(p);
+  read_initial_shear_stream_(p);
   read_initial_shock_tube_(p);
   read_initial_shu_collapse_(p);
   read_initial_soup_(p);
@@ -1155,6 +1173,27 @@ void EnzoConfig::read_initial_sedov_random_(Parameters * p)
     p->value_float   ("Initial:sedov_random:density",1.0);
   initial_sedov_random_te_multiplier =
     p->value_integer  ("Initial:sedov_random:te_multiplier",1);
+}
+
+//----------------------------------------------------------------------
+
+void EnzoConfig::read_initial_shear_stream_(Parameters * p)
+{
+  // Shear Stream Initialization
+  initial_shear_stream_vshear = p->value_float
+    ("Initial:shear_stream:vshear",0.0);
+  initial_shear_stream_chi = p->value_float
+    ("Initial:shear_stream:chi",100.0);
+  initial_shear_stream_lambda_pert = p->value_float
+    ("Initial:shear_stream:lambda_pert",0.0);
+  initial_shear_stream_rho_hot = p->value_float
+    ("Initial:shear_stream:rho_hot",1.0);
+  initial_shear_stream_vel_pert = p->value_float
+    ("Initial:shear_stream:vel_pert",0.4);
+  initial_shear_stream_radius = p->value_float
+    ("Initial:shear_stream:radius",0.5);
+  initial_shear_stream_smoothing_thickness = p->value_float
+    ("Initial:shear_stream:smoothing_thickness",0.05);
 }
 
 //----------------------------------------------------------------------

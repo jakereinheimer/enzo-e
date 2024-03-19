@@ -224,6 +224,14 @@ public: // interface
       initial_sedov_random_radius_relative(0.0),
       initial_sedov_random_te_multiplier(0),
       initial_sedov_rank(0),
+      //EnzoInitialShearStream
+      initial_shear_stream_vshear(0.0),
+      initial_shear_stream_chi(0.0),
+      initial_shear_stream_lambda_pert(0.0),
+      initial_shear_stream_rho_hot(0.0),
+      initial_shear_stream_vel_pert(0.0),
+      initial_shear_stream_radius(0.0),
+      initial_shear_stream_smoothing_thickness(0.0),
       // EnzoInitialShockTube
       initial_shock_tube_aligned_ax(""),
       initial_shock_tube_axis_velocity(0.0),
@@ -382,6 +390,8 @@ public: // interface
       method_accretion_flavor(""),
       method_accretion_physical_density_threshold_cgs(0.0),
       method_accretion_max_mass_fraction(0.0),
+      // EnzoMethodCooling
+      method_cooling_scaling_factor(1.0),
       // EnzoMethodSinkMaker
       method_sink_maker_jeans_length_resolution_cells(0.0),
       method_sink_maker_physical_density_threshold_cgs(0.0),
@@ -462,6 +472,7 @@ protected: // methods
   void read_initial_pm_(Parameters *);
   void read_initial_sedov_(Parameters *);
   void read_initial_sedov_random_(Parameters *);
+  void read_initial_shear_stream_(Parameters *);
   void read_initial_shock_tube_(Parameters *);
   void read_initial_shu_collapse_(Parameters *);
   void read_initial_soup_(Parameters *);
@@ -656,6 +667,15 @@ public: // attributes
   double                     initial_sedov_random_pressure_out;
   double                     initial_sedov_random_density;
   int                        initial_sedov_random_te_multiplier;
+
+  //EnzoInitialShearStream
+  double                     initial_shear_stream_vshear;
+  double                     initial_shear_stream_chi;
+  double                     initial_shear_stream_lambda_pert;
+  double                     initial_shear_stream_rho_hot;
+  double                     initial_shear_stream_vel_pert;
+  double                     initial_shear_stream_radius;
+  double                     initial_shear_stream_smoothing_thickness;
 
   /// EnzoInitialShockTube
   std::string                initial_shock_tube_setup_name;

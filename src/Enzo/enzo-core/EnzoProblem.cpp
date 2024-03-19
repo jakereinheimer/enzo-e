@@ -286,6 +286,15 @@ Initial * EnzoProblem::create_initial_
        enzo_config->initial_bb_test_nominal_sound_speed,
        enzo_config->initial_bb_test_angular_rotation_velocity,
        enzo_config->initial_bb_test_external_density);
+  } else if (type == "shear_stream"){
+    initial = new EnzoInitialShearStream(cycle, time,
+    enzo_config->initial_shear_stream_vshear,
+    enzo_config->initial_shear_stream_chi,
+    enzo_config->initial_shear_stream_lambda_pert,
+    enzo_config->initial_shear_stream_rho_hot,
+    enzo_config->initial_shear_stream_vel_pert,
+    enzo_config->initial_shear_stream_radius,
+    enzo_config->initial_shear_stream_smoothing_thickness);
   } else {
     initial = Problem::create_initial_
       (type,index,config,parameters);
@@ -690,6 +699,12 @@ Method * EnzoProblem::create_method_
        enzo_config->method_gravity_accumulate,
        index_prolong,
        enzo_config->method_gravity_dt_max);
+
+  } else if (name == "cooling") {
+    // jake
+    method = new EnzoMethodCooling(
+      enzo_config->method_cooling_scaling_factor
+    );
 
   } else if (name == "mhd_vlct") {
 
