@@ -22,14 +22,7 @@ public: // interface
 
   /// CHARM++ constructor
   EnzoInitialAccretionTest
-  (int cycle, double time,
-   const double sink_position[3],
-   const double sink_velocity[3],
-   double sink_mass,
-   double gas_density,
-   double gas_pressure,
-   double gas_radial_velocity
-   ) throw();
+  (int cycle, double time, ParameterGroup p) throw();
 
   /// CHARM++ PUP::able declaration
   PUPable_decl(EnzoInitialAccretionTest);
@@ -41,15 +34,8 @@ public: // interface
       gas_density_(0.0),
       gas_pressure_(0.0),
       gas_radial_velocity_(0.0)
-  {
-    sink_position_[0] = 0.0;
-    sink_position_[1] = 0.0;
-    sink_position_[2] = 0.0;
-
-    sink_velocity_[0] = 0.0;
-    sink_velocity_[1] = 0.0;
-    sink_velocity_[2] = 0.0;
-  }
+      sink_position_{},
+      sink_velocity_{}
 
   /// CHARM++ Pack / Unpack function
   void pup (PUP::er &p);

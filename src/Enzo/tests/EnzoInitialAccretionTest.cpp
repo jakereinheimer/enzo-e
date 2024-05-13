@@ -15,26 +15,22 @@
 
 EnzoInitialAccretionTest::EnzoInitialAccretionTest
   (int cycle, double time,
-   const double sink_position[3],
-   const double sink_velocity[3],
-   double sink_mass,
-   double gas_density,
-   double gas_pressure,
-   double gas_radial_velocity
-   ) throw()
-    : Initial(cycle,time),
-      sink_mass_(sink_mass),
-      gas_density_(gas_density),
-      gas_pressure_(gas_pressure),
-      gas_radial_velocity_(gas_radial_velocity)
-{
-  sink_position_[0] = sink_position[0];
-  sink_position_[1] = sink_position[1];
-  sink_position_[2] = sink_position[2];
-  sink_velocity_[0] = sink_velocity[0];
-  sink_velocity_[1] = sink_velocity[1];
-  sink_velocity_[2] = sink_velocity[2];
-}
+  ParameterGroup p) throw()
+  : Initial(cycle,time),
+    sink_position_{},
+    sink_velocity_{},
+    sink_mass_(p.value_float("sink_mass",0.0)),
+    gas_density_(p.value_float("gas_density",0.0)),
+    gas_pressure_(p.value_float("gas_pressure",0.0)),
+    gas_radial_velocity_(p.value_float("gas_radial_velocity",0.0))
+    {
+    sink_position_[0] = p.list_value_float(0,"sink_position",0.0);
+    sink_position_[1] = p.list_value_float(1,"sink_position",0.0);
+    sink_position_[2] = p.list_value_float(2,"sink_position",0.0);
+    sink_velocity_[0] = p.list_value_float(0,"sink_velocity",0.0);
+    sink_velocity_[1] = p.list_value_float(1,"sink_velocity",0.0);
+    sink_velocity_[2] = p.list_value_float(2,"sink_velocity",0.0);
+    }
 
 void EnzoInitialAccretionTest::pup (PUP::er &p)
 {

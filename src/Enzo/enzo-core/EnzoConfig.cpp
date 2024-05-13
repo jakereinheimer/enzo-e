@@ -72,6 +72,19 @@ EnzoConfig::EnzoConfig() throw ()
   initial_collapse_particle_ratio(0.0),
   initial_collapse_mass(0.0),
   initial_collapse_temperature(0.0),
+  // EnzoInitialFeedbackTest
+  initial_feedback_test_density(),
+  initial_feedback_test_HI_density(),
+  initial_feedback_test_HII_density(),
+  initial_feedback_test_HeI_density(),
+  initial_feedback_test_HeII_density(),
+  initial_feedback_test_HeIII_density(),
+  initial_feedback_test_e_density(),
+  initial_feedback_test_star_mass(),
+  initial_feedback_test_temperature(),
+  initial_feedback_test_from_file(),
+  initial_feedback_test_metal_fraction(0.01),
+  initial_feedback_test_luminosity(),
   // EnzoInitialGrackleTest
   initial_grackle_test_maximum_H_number_density(1000.0),
   initial_grackle_test_maximum_metallicity(1.0),
@@ -171,11 +184,6 @@ EnzoConfig::EnzoConfig() throw ()
   method_check_include_ghosts(false),
   // EnzoInitialMergeSinksTest
   initial_merge_sinks_test_particle_data_filename(""),
-  // EnzoInitialAccretionTest
-  initial_accretion_test_sink_mass(0.0),
-  initial_accretion_test_gas_density(0.0),
-  initial_accretion_test_gas_pressure(0.0),
-  initial_accretion_test_gas_radial_velocity(0.0),
   // EnzoInitialShuCollapse
   initial_shu_collapse_truncation_radius(0.0),
   initial_shu_collapse_nominal_sound_speed(0.0),
@@ -319,6 +327,7 @@ EnzoConfig::EnzoConfig() throw ()
     method_background_acceleration_center[i] = 0.5;
     method_background_acceleration_angular_momentum[i] = 0;
 
+    initial_feedback_test_position[i] = 0.5;
   }
 
   method_background_acceleration_angular_momentum[2] = 1;
@@ -464,6 +473,20 @@ void EnzoConfig::pup (PUP::er &p)
   p | initial_burkertbodenheimer_rotating;
   p | initial_burkertbodenheimer_temperature;
 
+  PUParray(p, initial_feedback_test_position,3);
+  p | initial_feedback_test_luminosity;
+  p | initial_feedback_test_density;
+  p | initial_feedback_test_e_density;
+  p | initial_feedback_test_from_file;
+  p | initial_feedback_test_HeI_density;
+  p | initial_feedback_test_HeII_density;
+  p | initial_feedback_test_HeIII_density;
+  p | initial_feedback_test_HI_density;
+  p | initial_feedback_test_HII_density;
+  p | initial_feedback_test_metal_fraction;
+  p | initial_feedback_test_star_mass;
+  p | initial_feedback_test_temperature;
+
   PUParray(p, initial_IG_center_position,3);
   PUParray(p, initial_IG_bfield,3);
   p | initial_IG_analytic_velocity;
@@ -506,13 +529,6 @@ void EnzoConfig::pup (PUP::er &p)
   p | method_check_dir;
   p | method_check_monitor_iter;
   p | method_check_include_ghosts;
-
-  PUParray(p,initial_accretion_test_sink_position,3);
-  PUParray(p,initial_accretion_test_sink_velocity,3);
-  p | initial_accretion_test_sink_mass;
-  p | initial_accretion_test_gas_density;
-  p | initial_accretion_test_gas_pressure;
-  p | initial_accretion_test_gas_radial_velocity;
 
   PUParray(p,initial_shu_collapse_center,3);
   PUParray(p,initial_shu_collapse_drift_velocity,3);
@@ -678,13 +694,13 @@ void EnzoConfig::read(Parameters * p) throw()
   read_field_(p);
 
   // Initial [sorted]
-  read_initial_accretion_test_(p);
   read_initial_bb_test_(p);
   read_initial_bcenter_(p);
   read_initial_burkertbodenheimer_(p);
   read_initial_cloud_(p);
   read_initial_collapse_(p);
   read_initial_cosmology_(p);
+  read_initial_feedback_test_(p);
   read_initial_grackle_(p);
   read_initial_hdf5_(p);
   read_initial_isolated_galaxy_(p);
@@ -1190,35 +1206,53 @@ void EnzoConfig::read_initial_isolated_galaxy_(Parameters * p)
 
 //----------------------------------------------------------------------
 
+void EnzoConfig::read_initial_feedback_test_(Parameters * p)
+{
+  for (int axis=0; axis<3; axis++){
+    initial_feedback_test_position[axis] = p->list_value_float
+      (axis, "Initial:feedback_test:position", 0.5);
+  }
+  initial_feedback_test_luminosity = p->value_float
+    ("Initial:feedback_test:luminosity", 0.0);
+
+  initial_feedback_test_density = p->value_float
+    ("Initial:feedback_test:density", 1.0E-24);
+
+  initial_feedback_test_HI_density = p->value_float
+    ("Initial:feedback_test:HI_density", 1.0E-24);
+
+  initial_feedback_test_HII_density = p->value_float
+    ("Initial:feedback_test:HII_density", 1.0E-100);
+
+  initial_feedback_test_HeI_density = p->value_float
+    ("Initial:feedback_test:HeI_density", 1.0E-100);
+
+  initial_feedback_test_HeII_density = p->value_float
+    ("Initial:feedback_test:HeII_density", 1.0E-100);
+
+  initial_feedback_test_HeIII_density = p->value_float
+    ("Initial:feedback_test:HeIII_density", 1.0E-100);
+
+  initial_feedback_test_e_density = p->value_float
+    ("Initial:feedback_test:e_density", 1.0E-100);
+
+  initial_feedback_test_star_mass = p->value_float
+    ("Initial:feedback_test:star_mass", 1000.0);
+
+  initial_feedback_test_temperature = p->value_float
+    ("Initial:feedback_test:temperature", 1.0E4);
+
+  initial_feedback_test_from_file = p->value_logical
+    ("Initial:feedback_test:from_file", false);
+
+  initial_feedback_test_metal_fraction = p->value_float
+    ("Initial:feedback_test:metal_fraction", 0.01);
+}
+
 void EnzoConfig::read_initial_merge_sinks_test_(Parameters * p)
 {
   initial_merge_sinks_test_particle_data_filename= p->value_string
     ("Initial:merge_sinks_test:particle_data_filename","");
-}
-
-void EnzoConfig::read_initial_accretion_test_(Parameters * p)
-{
-  for (int axis=0; axis<3; axis++){
-    initial_accretion_test_sink_position[axis] = p->list_value_float
-      (axis, "Initial:accretion_test:sink_position", 0.0);
-  }
-
-  for (int axis=0; axis<3; axis++){
-    initial_accretion_test_sink_velocity[axis] = p->list_value_float
-      (axis, "Initial:accretion_test:sink_velocity", 0.0);
-  }
-
-  initial_accretion_test_sink_mass = p->value_float
-    ("Initial:accretion_test:sink_mass",0.0);
-
-  initial_accretion_test_gas_density = p->value_float
-    ("Initial:accretion_test:gas_density",1.0e-6);
-
-  initial_accretion_test_gas_pressure = p->value_float
-    ("Initial:accretion_test:gas_pressure",1.0e-6);
-
-  initial_accretion_test_gas_radial_velocity = p->value_float
-    ("Initial:accretion_test:gas_radial_velocity",0.0);
 }
 
 void EnzoConfig::read_initial_shu_collapse_(Parameters * p)

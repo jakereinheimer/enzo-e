@@ -65,11 +65,6 @@ public: // interface
       // INITIAL [sorted]
       //--------------------
 
-      // EnzoInitialAccretionTest
-      initial_accretion_test_gas_density(0.0),
-      initial_accretion_test_gas_pressure(0.0),
-      initial_accretion_test_gas_radial_velocity(0.0),
-      initial_accretion_test_sink_mass(0.0),
       // EnzoInitialBBTest
       initial_bb_test_angular_rotation_velocity(0.0),
       initial_bb_test_external_density(0.0),
@@ -114,6 +109,19 @@ public: // interface
       initial_collapse_temperature(0.0),
       // EnzoInitialCosmology
       initial_cosmology_temperature(0.0),
+      // EnzoInitialFeedbackTest
+      initial_feedback_test_density(),
+      initial_feedback_test_e_density(),
+      initial_feedback_test_from_file(),
+      initial_feedback_test_HeI_density(),
+      initial_feedback_test_HeII_density(),
+      initial_feedback_test_HeIII_density(),
+      initial_feedback_test_HI_density(),
+      initial_feedback_test_HII_density(),
+      initial_feedback_test_metal_fraction(),
+      initial_feedback_test_star_mass(),
+      initial_feedback_test_temperature(),
+      initial_feedback_test_luminosity(),
       // EnzoGrackleTest
       initial_grackle_test_maximum_H_number_density(1000.0),
       initial_grackle_test_maximum_metallicity(1.0),
@@ -361,6 +369,8 @@ public: // interface
       initial_accretion_test_sink_velocity[axis] = 0.0;
       method_background_acceleration_center[axis] = 0.5;
       method_background_acceleration_angular_momentum[axis] = 0;
+
+      initial_feedback_test_position[axis] = 0.5;
     }
     method_background_acceleration_angular_momentum[2] = 1;
   }
@@ -380,13 +390,13 @@ protected: // methods
   //--------------------
   // read_initial [sorted]
   //--------------------
-  void read_initial_accretion_test_(Parameters *);
   void read_initial_bb_test_(Parameters *);
   void read_initial_bcenter_(Parameters *);
   void read_initial_burkertbodenheimer_(Parameters *);
   void read_initial_cloud_(Parameters *);
   void read_initial_collapse_(Parameters *);
   void read_initial_cosmology_(Parameters *);
+  void read_initial_feedback_test_(Parameters *);
   void read_initial_grackle_(Parameters *);
   void read_initial_hdf5_(Parameters *);
   void read_initial_isolated_galaxy_(Parameters *);
@@ -583,6 +593,22 @@ public: // attributes
   double                     initial_turbulence_pressure;
   double                     initial_turbulence_temperature;
 
+  /// EnzoInitialFeedbackTest
+
+  double                     initial_feedback_test_position[3];
+  double                     initial_feedback_test_luminosity;
+  double                     initial_feedback_test_density;
+  double                     initial_feedback_test_HI_density;
+  double                     initial_feedback_test_HII_density;
+  double                     initial_feedback_test_HeI_density;
+  double                     initial_feedback_test_HeII_density;
+  double                     initial_feedback_test_HeIII_density;
+  double                     initial_feedback_test_e_density;
+  double                     initial_feedback_test_star_mass;
+  double                     initial_feedback_test_temperature;
+  bool                       initial_feedback_test_from_file;
+  double                     initial_feedback_test_metal_fraction;
+
   /// EnzoInitialIsolatedGalaxy
   bool                       initial_IG_analytic_velocity;
   bool                       initial_IG_include_recent_SF;
@@ -611,14 +637,6 @@ public: // attributes
 
   // EnzoInitialMergeSinksTest
   std::string                initial_merge_sinks_test_particle_data_filename;
-
-  // EnzoInitialAccretionTest
-  double                     initial_accretion_test_gas_density;
-  double                     initial_accretion_test_gas_pressure;
-  double                     initial_accretion_test_gas_radial_velocity;
-  double                     initial_accretion_test_sink_mass;
-  double                     initial_accretion_test_sink_position[3];
-  double                     initial_accretion_test_sink_velocity[3];
 
   // EnzoInitialShuCollapse
   bool                       initial_shu_collapse_central_sink_exists;

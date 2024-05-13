@@ -166,7 +166,7 @@ Initial * EnzoProblem::create_initial_
     initial = new EnzoInitialGrackleTest(enzo_config);
 #endif /* CONFIG_USE_GRACKLE */
   } else if (type == "feedback_test") {
-    initial = new EnzoInitialFeedbackTest(cycle, time, p_group);
+    initial = new EnzoInitialFeedbackTest(enzo_config);
   } else if (type == "vlct_bfield") {
     initial = new EnzoInitialBCenter(parameters, cycle, time,
 				     enzo_config->initial_bcenter_update_etot);
@@ -261,14 +261,7 @@ Initial * EnzoProblem::create_initial_
   } else if (type == "merge_sinks_test") {
     initial = new EnzoInitialMergeSinksTest (enzo_config);
   } else if (type == "accretion_test") {
-    initial = new EnzoInitialAccretionTest
-      (cycle, time,
-       enzo_config->initial_accretion_test_sink_position,
-       enzo_config->initial_accretion_test_sink_velocity,
-       enzo_config->initial_accretion_test_sink_mass,
-       enzo_config->initial_accretion_test_gas_density,
-       enzo_config->initial_accretion_test_gas_pressure,
-       enzo_config->initial_accretion_test_gas_radial_velocity);
+    initial = new EnzoInitialAccretionTest(cycle, time, p_group);
   } else if (type == "shu_collapse") {
     initial = new EnzoInitialShuCollapse
       (cycle, time,
