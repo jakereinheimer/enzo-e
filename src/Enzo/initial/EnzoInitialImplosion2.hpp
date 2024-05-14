@@ -20,7 +20,7 @@ public: // interface
   EnzoInitialImplosion2() throw() : Initial() { }
   
   /// Constructor
-  EnzoInitialImplosion2(int cycle, double time) throw();
+  EnzoInitialImplosion2(int cycle, double time, ParameterGroup*) throw();
 
   /// CHARM++ PUP::able declaration
   PUPable_decl(EnzoInitialImplosion2);

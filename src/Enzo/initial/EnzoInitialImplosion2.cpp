@@ -12,7 +12,7 @@
 //----------------------------------------------------------------------
 
 EnzoInitialImplosion2::EnzoInitialImplosion2 
-(int init_cycle, double init_time) throw ()
+(int init_cycle, double init_time, ParameterGroup*) throw ()
   : Initial(init_cycle, init_time) 
 { }
 
