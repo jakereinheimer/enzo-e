@@ -17,29 +17,7 @@ class EnzoInitialCollapse : public Initial {
 public: // interface
 
   /// CHARM++ constructor
-  EnzoInitialCollapse
-  (int cycle, double time,
-   int rank,
-   const int array[3],
-   double radius_relative,
-   double particle_ratio,
-   double mass,
-   double temperature
-   ) throw()
-    : Initial (cycle,time),
-      rank_(rank),
-      radius_relative_(radius_relative),
-      particle_ratio_(particle_ratio),
-      mass_(mass),
-      temperature_(temperature)
-  {
-    array_[0] = array[0];
-    array_[1] = array[1];
-    array_[2] = array[2];
-  }    
-  
-  /// Constructor
-  EnzoInitialCollapse(const EnzoConfig * enzo_config) throw();
+  EnzoInitialCollapse(int cycle, double time, ParameterGroup p) throw();
 
   /// CHARM++ PUP::able declaration
   PUPable_decl(EnzoInitialCollapse);

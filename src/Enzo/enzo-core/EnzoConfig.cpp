@@ -66,12 +66,6 @@ EnzoConfig::EnzoConfig() throw ()
   initial_cloud_velocity_wind(0.0),
   // EnzoInitialCosmology
   initial_cosmology_temperature(0.0),
-  // EnzoInitialCollapse
-  initial_collapse_rank(0),
-  initial_collapse_radius_relative(0.0),
-  initial_collapse_particle_ratio(0.0),
-  initial_collapse_mass(0.0),
-  initial_collapse_temperature(0.0),
   // EnzoInitialGrackleTest
   initial_grackle_test_maximum_H_number_density(1000.0),
   initial_grackle_test_maximum_metallicity(1.0),
@@ -313,7 +307,6 @@ EnzoConfig::EnzoConfig() throw ()
     initial_soup_array[i]  = 0;
     initial_soup_d_pos[i]  = 0.0;
     initial_soup_d_size[i] = 0.0;
-    initial_collapse_array[i] = 0;
     initial_IG_center_position[i] = 0.5;
     initial_IG_bfield[i] = 0.0;
     method_background_acceleration_center[i] = 0.5;
@@ -383,13 +376,6 @@ void EnzoConfig::pup (PUP::er &p)
   p | initial_cloud_perturb_seed;
 
   p | initial_cosmology_temperature;
-
-  p | initial_collapse_rank;
-  PUParray(p,initial_collapse_array,3);
-  p | initial_collapse_radius_relative;
-  p | initial_collapse_particle_ratio;
-  p | initial_collapse_mass;
-  p | initial_collapse_temperature;
 
   p | initial_grackle_test_minimum_H_number_density;
   p | initial_grackle_test_maximum_H_number_density;
@@ -683,7 +669,6 @@ void EnzoConfig::read(Parameters * p) throw()
   read_initial_bcenter_(p);
   read_initial_burkertbodenheimer_(p);
   read_initial_cloud_(p);
-  read_initial_collapse_(p);
   read_initial_cosmology_(p);
   read_initial_grackle_(p);
   read_initial_hdf5_(p);
@@ -748,28 +733,6 @@ void EnzoConfig::read_adapt_(Parameters *p)
 void EnzoConfig::read_field_(Parameters *p)
 {
   field_uniform_density = p->value_float ("Field:uniform_density",1.0);
-}
-
-//----------------------------------------------------------------------
-
-void EnzoConfig::read_initial_collapse_(Parameters * p)
-{
-  initial_collapse_rank =  p->value_integer("Initial:collapse:rank",0);
-  for (int i=0; i<initial_collapse_rank; i++) {
-    initial_collapse_array[i] =
-      p->list_value_integer (i,"Initial:collapse:array",1);
-  }
-  for (int i=initial_collapse_rank; i<3; i++) {
-    initial_collapse_array[i] = 1;
-  }
-  initial_collapse_radius_relative =
-    p->value_float("Initial:collapse:radius_relative",0.1);
-  initial_collapse_particle_ratio =
-    p->value_float("Initial:collapse:particle_ratio",0.0);
-  initial_collapse_mass =
-    p->value_float("Initial:collapse:mass",enzo_constants::mass_solar);
-  initial_collapse_temperature =
-    p->value_float("Initial:collapse:temperature",10.0);
 }
 
 //----------------------------------------------------------------------

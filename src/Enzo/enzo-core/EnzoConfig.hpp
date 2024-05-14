@@ -106,12 +106,6 @@ public: // interface
       initial_cloud_radius(0.),
       initial_cloud_subsample_n(0),
       initial_cloud_velocity_wind(0.0),
-      // EnzoInitialCollapse
-      initial_collapse_mass(0.0),
-      initial_collapse_particle_ratio(0.0),
-      initial_collapse_radius_relative(0.0),
-      initial_collapse_rank(0),
-      initial_collapse_temperature(0.0),
       // EnzoInitialCosmology
       initial_cosmology_temperature(0.0),
       // EnzoGrackleTest
@@ -354,7 +348,6 @@ public: // interface
       initial_soup_array[axis] = 0;
       initial_soup_d_pos[axis] = 0;
       initial_soup_d_size[axis] = 0;
-      initial_collapse_array[axis] = 0;
       initial_IG_center_position[axis] = 0.5;
       initial_IG_bfield[axis]         = 0.0;
       initial_accretion_test_sink_position[axis] = 0.0;
@@ -385,7 +378,6 @@ protected: // methods
   void read_initial_bcenter_(Parameters *);
   void read_initial_burkertbodenheimer_(Parameters *);
   void read_initial_cloud_(Parameters *);
-  void read_initial_collapse_(Parameters *);
   void read_initial_cosmology_(Parameters *);
   void read_initial_grackle_(Parameters *);
   void read_initial_hdf5_(Parameters *);
@@ -491,14 +483,6 @@ public: // attributes
 
   /// EnzoInitialCosmology;
   double                     initial_cosmology_temperature;
-
-  /// EnzoInitialCollapse
-  int                        initial_collapse_rank;
-  int                        initial_collapse_array[3];
-  double                     initial_collapse_radius_relative;
-  double                     initial_collapse_particle_ratio;
-  double                     initial_collapse_mass;
-  double                     initial_collapse_temperature;
 
   /// EnzoGrackleTest
   double                     initial_grackle_test_maximum_H_number_density;

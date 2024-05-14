@@ -192,14 +192,7 @@ Initial * EnzoProblem::create_initial_
        enzo_config->initial_cloud_perturb_max_wavelength,
        enzo_config->initial_cloud_perturb_seed);
   } else if (type == "collapse") {
-    initial = new EnzoInitialCollapse
-      (cycle,time,
-       enzo_config->initial_collapse_rank,
-       enzo_config->initial_collapse_array,
-       enzo_config->initial_collapse_radius_relative,
-       enzo_config->initial_collapse_particle_ratio,
-       enzo_config->initial_collapse_mass,
-       enzo_config->initial_collapse_temperature);
+    initial = new EnzoInitialCollapse(cycle, time, p_group);
   } else if (type == "cosmology") {
     initial = new EnzoInitialCosmology
       (cycle,time,
