@@ -11,30 +11,25 @@
 #include "Enzo/tests/tests.hpp"
 
 EnzoInitialBBTest::EnzoInitialBBTest
-(int cycle, double time,
- const double center[3],
- const double drift_velocity[3],
- double mean_density,
- double fluctuation_amplitude,
- double truncation_radius,
- double nominal_sound_speed,
- double angular_rotation_velocity,
- double external_density) throw()
+(int cycle, double time, ParameterGroup p) throw()
   :Initial(cycle, time),
-   mean_density_(mean_density),
-   fluctuation_amplitude_(fluctuation_amplitude),
-   truncation_radius_(truncation_radius),
-   nominal_sound_speed_(nominal_sound_speed),
-   angular_rotation_velocity_(angular_rotation_velocity),
-   external_density_(external_density)
-{
-  center_[0] = center[0];
-  center_[1] = center[1];
-  center_[2] = center[2];
+   mean_density_(p.value_float("mean_density",0.0)),
+   fluctuation_amplitude_(p.value_float("fluctuation_amplitude",0.0)),
+   truncation_radius_(p.value_float("truncation_radius",0.0)),
+   nominal_sound_speed_(p.value_float("nominal_sound_speed",0.0)),
+   angular_rotation_velocity_(p.value_float("angular_rotation_velocity",0.0)),
+   external_density_(p.value_float("external_density",0.0)),
+   center_{},
+   drift_velocity{}
 
-  drift_velocity_[0] = drift_velocity[0];
-  drift_velocity_[1] = drift_velocity[1];
-  drift_velocity_[2] = drift_velocity[2];
+{
+  center_[0] = p.list_value_float(0,"center",0.0);
+  center_[1] = p.list_value_float(1,"center",0.0);
+  center_[2] = p.list_value_float(2,"center",0.0);
+
+  drift_velocity_[0] = p.list_value_float(0,"drift_velocity",0.0);
+  drift_velocity_[1] = p.list_value_float(1,"drift_velocity",0.0);
+  drift_velocity_[2] = p.list_value_float(2,"drift_velocity",0.0);
 }
 
 void EnzoInitialBBTest::pup (PUP::er &p)

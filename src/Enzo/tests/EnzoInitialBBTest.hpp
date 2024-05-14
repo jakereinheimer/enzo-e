@@ -19,15 +19,7 @@ public: // interface
 
   /// Constructor
   EnzoInitialBBTest
-  (int cycle, double time,
-   const double center[3],
-   const double drift_velocity[3],
-   double mean_density,
-   double fluctuation_amplitude,
-   double truncation_radius,
-   double nominal_sound_speed,
-   double angular_rotation_velocity,
-   double external_density) throw();
+  (int cycle, double time, ParameterGroup p) throw();
 
   /// CHARM++ PUP::able declaration
   PUPable_decl(EnzoInitialBBTest);
@@ -40,7 +32,9 @@ public: // interface
       mean_density_(0.0),
       fluctuation_amplitude_(0.0),
       angular_rotation_velocity_(0.0),
-      external_density_(0.0)
+      external_density_(0.0),
+      center{},
+      drift_velocity{}
   {}
 
   /// CHARM++ Pack / Unpack function

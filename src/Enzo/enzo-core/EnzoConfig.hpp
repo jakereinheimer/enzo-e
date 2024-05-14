@@ -70,13 +70,6 @@ public: // interface
       initial_accretion_test_gas_pressure(0.0),
       initial_accretion_test_gas_radial_velocity(0.0),
       initial_accretion_test_sink_mass(0.0),
-      // EnzoInitialBBTest
-      initial_bb_test_angular_rotation_velocity(0.0),
-      initial_bb_test_external_density(0.0),
-      initial_bb_test_fluctuation_amplitude(0.0),
-      initial_bb_test_mean_density(0.0),
-      initial_bb_test_nominal_sound_speed(0.0),
-      initial_bb_test_truncation_radius(0.0),
       // EnzoInitialBCenter
       initial_bcenter_update_etot(false),
       // EnzoInitialBurkertBodenheimer
@@ -381,7 +374,6 @@ protected: // methods
   // read_initial [sorted]
   //--------------------
   void read_initial_accretion_test_(Parameters *);
-  void read_initial_bb_test_(Parameters *);
   void read_initial_bcenter_(Parameters *);
   void read_initial_burkertbodenheimer_(Parameters *);
   void read_initial_cloud_(Parameters *);
@@ -629,16 +621,6 @@ public: // attributes
   double                     initial_shu_collapse_instability_parameter;
   double                     initial_shu_collapse_nominal_sound_speed;
   double                     initial_shu_collapse_truncation_radius;
-
-  // EnzoInitialBBTest
-  double                     initial_bb_test_angular_rotation_velocity;
-  double                     initial_bb_test_center[3];
-  double                     initial_bb_test_drift_velocity[3];
-  double                     initial_bb_test_external_density;
-  double                     initial_bb_test_fluctuation_amplitude;
-  double                     initial_bb_test_mean_density;
-  double                     initial_bb_test_nominal_sound_speed;
-  double                     initial_bb_test_truncation_radius;
 
   //--------------------
   // EnzoMethod
