@@ -12,8 +12,7 @@
 //======================================================================
 
 EnzoInitialPpmlTest::EnzoInitialPpmlTest
-(int cycle, double time,
- const EnzoConfig * enzo_config) throw ()
+(int cycle, double time, ParameterGroup) throw ()
   : Initial(cycle,time)
 {
 }

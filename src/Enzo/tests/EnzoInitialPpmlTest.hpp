@@ -18,7 +18,7 @@ public: // interface
 
   /// Constructor
   EnzoInitialPpmlTest (int cycle, double time,
-		       const EnzoConfig * enzo_config) throw ();
+		       ParameterGroup) throw ();
 
   /// CHARM++ PUP::able declaration
   PUPable_decl(EnzoInitialPpmlTest);
