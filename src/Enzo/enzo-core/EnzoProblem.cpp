@@ -7,6 +7,7 @@
 ///
 ///
 
+#include "diffusion/EnzoMethodDiffusion.hpp"
 #include "enzo.hpp"
 
 #include "Enzo/assorted/assorted.hpp" // misc. Method classes
@@ -620,6 +621,10 @@ Method * EnzoProblem::create_method_
        enzo_config->initial_turbulence_temperature,
        enzo_config->method_turbulence_mach_number,
        enzo_config->physics_cosmology);
+
+  } else if (name == "diffusion") {
+
+    method = new EnzoMethodDiffusion(p_group);
 
   } else if (name == "cosmology") {
 

@@ -1,0 +1,147 @@
+ Boundary {
+     type = "periodic";
+ }
+
+ Domain {
+     lower = [ -6.000000000000000, -3.000000000000000, -3.000000000000000 ];
+     upper = [ 6.000000000000000, 3.000000000000000, 3.000000000000000 ];
+ }
+
+ Field {
+     alignment = 8;
+     bfieldi_x {
+         centering = [ false, true, true ];
+     };
+     bfieldi_y {
+         centering = [ true, false, true ];
+     };
+     bfieldi_z {
+         centering = [ true, true, false ];
+     };
+     gamma = 1.400000000000000;
+     ghost_depth = 3;
+     list = [ "density", "velocity_x", "velocity_y", "velocity_z", "pressure", "total_energy", "bfield_x", "bfield_y", "bfield_z", "bfieldi_x", "bfieldi_y", "bfieldi_z", "metal_density", "temperature", "internal_energy", "viscosity" ];
+     padding = 0;
+ }
+
+ Group {
+     color {
+         field_list = [ "metal_density" ];
+     };
+     derived {
+         field_list = [ "pressure" ];
+     };
+     list = [ "derived", "color" ];
+ }
+
+ Initial {
+     grackle_test {
+         dt = 100.0000000000000;
+         maximum_H_number_density = 1000.000000000000;
+         maximum_metallicity = 1.000000000000000;
+         maximum_temperature = 100000000.0000000;
+         minimum_H_number_density = 0.0001000000000000000;
+         minimum_metallicity = 1.000000000000000;
+         minimum_temperature = 10.00000000000000;
+     };
+     list = [ "shear_stream" ];
+     shear_stream {
+         chi = 100.0000000000000;
+         lambda_pert = 0.000000000000000;
+         rho_hot = 1.000000000000000;
+         smoothing_thickness = 0.05000000000000000;
+         vel_pert = 0.2000000000000000;
+         vshear = 0.5000000000000000;
+     };
+ }
+
+ Mesh {
+     root_blocks = [ 8, 4, 4 ];
+     root_rank = 3;
+     root_size = [ 256, 128, 128 ];
+ }
+
+ Method {
+     diffusion {
+         aniso = false;
+         cond = true;
+         iso = true;
+         visc = false;
+     };
+     grackle {
+         HydrogenFractionByMass = 0.7300000000000000;
+         UVbackground = 0;
+         courant = 0.4000000000000000;
+         data_file = "/Users/jakereinheimer/Desktop/Code/enzo-e/grackle/input/CloudyData_UVB=HM2012.h5";
+         metal_cooling = 1;
+         primordial_chemistry = 0;
+         self_shielding_method = 0;
+         use_cooling_timestep = false;
+         with_radiative_cooling = 1;
+     };
+     heat {
+         alpha = 1.000000000000000;
+         courant = 0.4000000000000000;
+     };
+     list = [ "mhd_vlct", "grackle", "heat" ];
+     mhd_vlct {
+         courant = 0.4000000000000000;
+         full_dt_reconstruct_method = "plm";
+         mhd_choice = "constrained_transport";
+         riemann_solver = "hlld";
+         theta_limiter = 1.500000000000000;
+     };
+     null {
+         dt = 100.0000000000000;
+     };
+ }
+
+ Output {
+     data {
+         dir = [ "GRACKLE_TEST_%03d", "cycle" ];
+         field_list = [ "density", "internal_energy", "total_energy", "velocity_x", "velocity_y", "velocity_z", "HI_density", "HII_density", "HM_density", "HeI_density", "HeII_density", "HeIII_density", "H2I_density", "H2II_density", "DI_density", "DII_density", "HDI_density", "e_density", "metal_density", "cooling_time", "temperature", "pressure" ];
+         name = [ "method_grackle-1-%03d.h5", "proc" ];
+         schedule {
+             start = 0.000000000000000;
+             step = 1000.000000000000;
+             var = "time";
+         };
+         type = "data";
+     };
+     hdf5 {
+         dir = [ "data_%07.4f", "time" ];
+         field_list = [ "density", "velocity_x", "velocity_y", "velocity_z", "total_energy", "bfield_x", "bfield_y", "bfield_z", "bfieldi_x", "bfieldi_y", "bfieldi_z", "temperature" ];
+         name = [ "process-dump-%03d.h5", "proc" ];
+         schedule {
+             start = 0.000000000000000;
+             step = 0.2500000000000000;
+             var = "time";
+         };
+         type = "data";
+     };
+     list = [ "hdf5" ];
+ }
+
+ Physics {
+     fluid_props {
+         dual_energy {
+             type = "modern";
+         };
+         floors {
+             density = 1.000000000000000e-200;
+             pressure = 1.000000000000000e-200;
+         };
+         gamma = 1.666666666666667;
+     };
+     list = [ "fluid_props" ];
+ }
+
+ Stopping {
+     time = 10.00000000000000;
+ }
+
+ Units {
+     density = 0.001000000000000000;
+     length = 100.0000000000000;
+     time = 1.000000000000000;
+ }

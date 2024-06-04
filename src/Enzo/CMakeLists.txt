@@ -85,6 +85,9 @@ add_subdirectory(chemistry)
 # define the Enzo::cosmology target
 add_subdirectory(cosmology)
 
+# define the Enzo::diffusion target
+add_subdirectory(diffusion)
+
 # define the Enzo::fluid-props target
 add_subdirectory(fluid-props)
 
@@ -121,7 +124,7 @@ add_subdirectory(utils)
 #  transitively included in all targets. If they weren't public, the include
 #  directories would not be properly inherited)
 target_link_libraries(enzo
-  PUBLIC Enzo::assorted Enzo::chemistry Enzo::cosmology Enzo::fluid-props
+  PUBLIC Enzo::assorted Enzo::chemistry Enzo::cosmology Enzo::diffusion Enzo::fluid-props
   PUBLIC Enzo::gravity Enzo::hydro-mhd Enzo::initial Enzo::io Enzo::mesh
   PUBLIC Enzo::particle Enzo::tests Enzo::utils
   PUBLIC ${Cello_LIBS} ${External_LIBS}

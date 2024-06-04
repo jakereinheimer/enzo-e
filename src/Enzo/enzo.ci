@@ -75,6 +75,7 @@ module enzo {
   PUPable EnzoMethodCheck;
   PUPable EnzoMethodComovingExpansion;
   PUPable EnzoMethodCosmology;
+  PUPable EnzoMethodDiffusion;
   PUPable EnzoMethodDistributedFeedback;
   PUPable EnzoMethodFeedback;
   PUPable EnzoMethodFeedbackSTARSS;

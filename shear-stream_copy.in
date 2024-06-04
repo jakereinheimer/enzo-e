@@ -1,0 +1,230 @@
+
+# Shear-Stream setup file
+
+include "input/Grackle/grackle.incl"
+
+#======================================================================
+# PROBLEM DEFINITION
+#======================================================================
+
+ Boundary { type = "periodic"; }
+
+ Domain {
+     lower = [ -6.0, -3.0, -3.0 ];
+     upper = [  6.0,  3.0,  3.0 ];
+ }
+
+ Physics {
+     fluid_props {
+         dual_energy { type = "modern"; }
+
+         #eos { gamma = 1.666666666666667; }
+         gamma = 1.666666666666667;
+         floors {
+             density = 1.0e-200;
+             pressure = 1.0e-200;
+         }
+     };
+
+     list = [ "fluid_props" ];
+ }
+
+ Initial {
+     list = ["shear_stream"];
+
+     # in the future, we will configure the initializer down below (currently,
+     # things are hard-coded)
+     #
+     #must be floats(doubles)
+     shear_stream {
+        vshear = 0.5;
+        chi = 100.0;
+        lambda_pert = 0.0;
+        rho_hot = 1.0;
+        vel_pert = 0.2;
+        smoothing_thickness = 0.05;
+  }
+
+ }
+
+ Stopping { time = 10.0; }
+
+ Units {
+     # not currently sure what the desired code units are...
+
+     # each assigned value specifies the value in cgs units that is equivalent
+     # to 1 code_unit
+     density = 0.001; # code_density = 1.0 g / cm^3 so .001 is 1 kg / m^3
+     length  = 100.0; # code_length  = 1.0 cm so 100 is 1 meter
+     time    = 1.0; # code_time    = 1.0 seconds
+ }
+
+
+#======================================================================
+# DISCRETIZATION
+#======================================================================
+
+ Mesh {
+     root_rank = 3;
+     root_size =   [256, 128, 128];
+     #root_size = [512,256,256]; # size of the active zone
+     root_blocks = [  8,   4,   4]; # number of root-grid blocks
+     #root_blocks = [2, 1, 1];
+ }
+
+ Field {
+     # The VL+CT method tracks primitive quantities.
+     #    - bfieldi_x/y/z are interface magnetic fields (aka longitudinal).
+     #      The x/y/z component is the only component tracked at the faces
+     #      between cells along the x/y/z component
+     #    - bfield_x/y/z are the cell-centered magenetic fields. Each
+     #      component is the average value of the corresponding interface
+     #      values
+     #
+     # in the future, we won't have to list all of the fields any more
+     list = [
+         "density", "velocity_x", "velocity_y", "velocity_z",
+         "pressure", "total_energy",
+         # only needed when using VL+CT method with constrained transport
+         "bfield_x", "bfield_y", "bfield_z",
+         "bfieldi_x", "bfieldi_y", "bfieldi_z",
+         #needed for grackle
+         "metal_density",
+         "temperature",
+         "internal_energy",
+         #needed for diffusion
+         "viscosity"
+         # only needed when using dual-energy formalism: "internal_energy",
+         # not needed unless we include want cooling: "metal_density",
+         # not used right now: "temperature",
+         ];
+
+     bfieldi_x{ centering = [false, true, true]; };
+     bfieldi_y{ centering = [true, false, true]; };
+     bfieldi_z{ centering = [true, true, false]; };
+
+     ghost_depth = 3;
+     padding = 0;
+     alignment = 8;
+ }
+
+
+
+ Group {
+     list = [ "derived" ];
+
+     # if we put fields in the "derived" group, like "pressure" or
+     # "temperature", the field values will be freshly derived from the current
+     # fields when it's time to write outputs 
+     #derived { field_list = [ "pressure","temperature" ]; };
+     derived { field_list = [ "pressure" ]; };
+
+     # if we include the "metal_density" field, we need to include:
+     list += ["color"];
+     color { field_list = ["metal_density"]; }
+ }
+
+#======================================================================
+# Computation
+#======================================================================
+
+ Method {
+
+     #list = ["mhd_vlct","grackle","heat","diffusion"];
+     list = ["mhd_vlct","grackle","heat"];
+
+     mhd_vlct { 
+         courant = 0.4;
+
+         # options include "no_bfield" and "constrained_transport"
+         #mhd_choice = "no_bfield";
+         mhd_choice = "constrained_transport";
+
+         # default is hlle. Options are hll, hlle, hllc, and hlld
+         #riemann_solver = "hllc";
+         riemann_solver = "hlld";
+
+         # Reconstructor algorithm. Options include:
+         #    - "nn" for Nearest-Neighbor reconstruction
+         #    - "plm" (or "plm_enzo") for the piecewise linear reconstruction
+         #      with the slope-limiter taken from Enzo's RK hydro-solver. The
+         #      slope limiter is affected by the theta-limiter value.
+         #      (This is currently the default choice - may change in future)
+         #    - "plm_athena" Piecewise Linear method with Athena's slope 
+         #      limiter
+         #
+         # NOTE: a pending PR changes the name of this parameter to
+         # reconstruct_method
+         full_dt_reconstruct_method = "plm";
+
+         # modifies the slope enzo slope limiter used in piecewise linear
+         # reconstruction. If "plm" or "plm_enzo" is not used, then this
+         # parameter is meainingless. This should have a value in the range
+         # [ 1.,2.]. A value of 1. is most dissipative and is the same as the
+         # minmod limiter. A value of 2. is least dissipative and is the same as
+         # the MC limiter. The default value is 1.5.
+         theta_limiter = 1.5;
+     }
+
+     grackle {
+       courant = 0.40; # meaningless unless use_cooling_timestep = true;
+     
+        data_file = "/Users/jakereinheimer/Desktop/Code/enzo-e/grackle/input/CloudyData_UVB=HM2012.h5";
+
+        with_radiative_cooling = 1;
+        primordial_chemistry   = 0;  # 1, 2, or 3
+        metal_cooling          = 1;  # 0 or 1 (off/on)
+        UVbackground           = 0;  # on or off
+        self_shielding_method  = 0;  # 0 - 3 (0 or 3 recommended)
+
+        # set this to true to limit the maximum timestep to the product of the
+        # minimum cooling/heating time and courant.
+       use_cooling_timestep = false; # default is false
+     }
+
+     heat {
+        courant = 0.4;
+        alpha = 1.0;
+     }
+
+     diffusion {
+        cond = true;
+        visc = false;
+        iso = true;
+        aniso = false;
+     }
+ }
+
+
+ Output {
+     # in the near future, all output command stuff will be moved to a method
+     # called output. Currently, there is a minor issue with scheduling exactly
+     # when those outputs get written to disk (that issue doesn't apply to
+     # this older approach)
+
+     list = ["hdf5"];
+
+     hdf5 {
+         type = "data";
+         # if using dual-energy formalism, include internal energy
+         # if using cooling, include temperature and metal_density
+         # -> make sure "temperature" is a derived-field
+         # -> make sure "metal_density" is a "color" field
+         field_list = ["density", "velocity_x", "velocity_y", "velocity_z",
+                       "total_energy",# "internal_energy",
+                       "bfield_x", "bfield_y", "bfield_z",
+                       "bfieldi_x", "bfieldi_y", "bfieldi_z",
+                       #"metal_density",
+                       "temperature"];
+                        #];
+         schedule {
+             step = 0.25;
+             var = "time";
+             start = 0.0;
+         };
+
+         dir = ["data_%07.4f","time"];
+         name = ["process-dump-%03d.h5", "proc"];
+     };
+ }
+
