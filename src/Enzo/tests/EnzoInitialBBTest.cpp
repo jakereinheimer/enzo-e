@@ -13,12 +13,12 @@
 EnzoInitialBBTest::EnzoInitialBBTest
 (int cycle, double time, ParameterGroup p) throw()
   :Initial(cycle, time),
-   mean_density_(p.value_float("mean_density",0.0)),
+   mean_density_(p.value_float("mean_density",1.0e-6)),
    fluctuation_amplitude_(p.value_float("fluctuation_amplitude",0.0)),
-   truncation_radius_(p.value_float("truncation_radius",0.0)),
-   nominal_sound_speed_(p.value_float("nominal_sound_speed",0.0)),
+   truncation_radius_(p.value_float("truncation_radius",1.0)),
+   nominal_sound_speed_(p.value_float("nominal_sound_speed",1.0)),
    angular_rotation_velocity_(p.value_float("angular_rotation_velocity",0.0)),
-   external_density_(p.value_float("external_density",0.0)),
+   external_density_(p.value_float("external_density",1.0e-6)),
    center_{},
    drift_velocity{}
 
