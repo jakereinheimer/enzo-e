@@ -20,8 +20,8 @@ EnzoInitialAccretionTest::EnzoInitialAccretionTest
     sink_position_{},
     sink_velocity_{},
     sink_mass_(p.value_float("sink_mass",0.0)),
-    gas_density_(p.value_float("gas_density",0.0)),
-    gas_pressure_(p.value_float("gas_pressure",0.0)),
+    gas_density_(p.value_float("gas_density",1.0e-6)),
+    gas_pressure_(p.value_float("gas_pressure",1.0e-6)),
     gas_radial_velocity_(p.value_float("gas_radial_velocity",0.0))
     {
     sink_position_[0] = p.list_value_float(0,"sink_position",0.0);
