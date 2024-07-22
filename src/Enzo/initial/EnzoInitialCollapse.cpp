@@ -21,10 +21,10 @@
 EnzoInitialCollapse::EnzoInitialCollapse(int cycle, double time, ParameterGroup p) throw()
   :Initial(cycle, time),
   rank_(p.value_int("rank",0)),
-  radius_relative_(p.value_float("radius_relative",0.0)),
+  radius_relative_(p.value_float("radius_relative",0.1)),
   particle_ratio_(p.value_float("particle_ratio",0.0)),
-  mass_(p.value_float("mass",0.0)),
-  temperature_(p.value_float("temperature",0.0))
+  mass_(p.value_float("mass",enzo_constants::mass_solar)),
+  temperature_(p.value_float("temperature",10.0))
   array_{}
   {
     array_[0]=p.list_value_int(0,"array",0)
